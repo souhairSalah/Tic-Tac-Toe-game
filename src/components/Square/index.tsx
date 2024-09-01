@@ -2,20 +2,24 @@ import React from 'react';
 import { useState } from 'react';
 
 interface Props {
+  squareValue : null;
+  onSquareClick : () => void;
 }
 
-const Square = () => {
-  const [squareValue, setSquareValue]= useState(""); 
+type player = "X"|"O"|null|boolean ;
 
-  function handleClick (){
-    setSquareValue("X");
-  }
+const Square = ({squareValue, onSquareClick}:Props) => {
+  // const [squareValue, setSquareValue] = useState<player>(null); 
+
+  // function handleClick (){
+  //   setSquareValue("X");
+  // }      
   return (
     <button 
-      className="cursor-pointer w-32 border-2 border-black h-32" 
-      onClick={handleClick}
+      className="cursor-pointer w-32 border-2 border-black h-32"
+      onClick={onSquareClick}
     >
-      {squareValue}
+        {squareValue}
     </button> 
   );
 }
