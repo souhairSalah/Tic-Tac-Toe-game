@@ -2,14 +2,15 @@
 import React from 'react';
 import { useState } from 'react';
 import Square from '../Square';
-
+import Confetti from 'react-confetti';
 
 const Board = () => {
+  const [showConfetti, setShowConfetti] = useState(false);
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
  
   function handleClick(i:number){
-    if (squares[i]||calculatWinner(squares)) {
+    if (squares[i]||calculateWinner(squares)) {
       return;
     }   
     const nextSquares = squares.slice();
@@ -20,11 +21,17 @@ const Board = () => {
     }
     setSquares(nextSquares);
     setXIsNext(!xIsNext);
+    const winner = calculateWinner(nextSquares);
+    if (winner) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 5000);  // Reset after 5 seconds
+    }
   }
-  const winner = calculatWinner(squares);
+
+  const winner = calculateWinner(squares);
   let status;
   if(winner){
-    status = "the winner is : "+ (winner);
+    status = (winner) + " is the winner" ;
   }
   else{
     status = 'Next player : ' +(xIsNext ? "X" : "O");
@@ -32,10 +39,12 @@ const Board = () => {
 
   function resetTheGame(){
     setSquares(Array(9).fill(null));
+    setShowConfetti(false);
   }
 
-  return (
-  <div className='grid gap-0'>
+  return (  
+  <div className={`grid gap-0`}>
+    
     <div className='grid grid-cols-3'>
       <Square squareValue={squares[0]} onSquareClick={() => handleClick(0)}/>
       <Square squareValue={squares[1]} onSquareClick={() => handleClick(1)}/>
@@ -51,20 +60,31 @@ const Board = () => {
       <Square squareValue={squares[7]} onSquareClick={() => handleClick(7)}/>  
       <Square squareValue={squares[8]} onSquareClick={() => handleClick(8)}/> 
     </div>
-    <div className='m-auto mt-4 text-blue-500 font-bold text-2xl'>{status}</div>
+        `
+    <div className={`m-auto mt-4 text-blue-500 font-bold text-2xl`}>{status}</div>
     <button 
       onClick={resetTheGame} 
       className='m-auto mt-4  font-medium text-xl text-white bg-[#60a5fa] border-blue-400 border-2 px-3 rounded-sm'
     >
       rest the game
     </button>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      {showConfetti && <Confetti 
+        width={window.innerWidth} 
+        height={window.innerHeight} 
+        recycle={false}
+        numberOfPieces={500}
+      />}
+    </div>
   </div>
   )
 }
 
 export default Board;
 
-function calculatWinner(index:string[]){
+
+ 
+function calculateWinner(index:string[]){
   const lines = [
     [0,1,2],
     [3,4,5],
